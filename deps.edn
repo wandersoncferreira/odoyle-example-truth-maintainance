@@ -1,0 +1,4 @@
+{:paths ["src"]
+ :deps
+ {net.sekao/odoyle-rules {:mvn/version "0.11.0"}
+  com.cerner/clara-rules {:mvn/version "0.21.0"}}}
