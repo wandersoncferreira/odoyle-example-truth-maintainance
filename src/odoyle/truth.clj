@@ -120,4 +120,22 @@
 
   (run-examples)
 
+;; Start Example with O'Doyle
+;; Initial cold temperatures:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20}]
+;; Initial local temperature records:  [{:id MCI, :hight 110, :low -10, :loc MCI} {:id LHR, :hight 90, :low 20, :loc LHR}]
+;; Initial locations that have never been below 0:  [{:id LHR, :over-zero-loc LHR}]
+
+;; Now add a temperature of -5 to LHR and a temperature of 115 to MCI
+;; New cold temperatures:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20} {:id 6, :cold-temperature -5}]
+;; New local temperature records:  [{:id MCI, :hight 115, :low -10, :loc MCI} {:id LHR, :hight 90, :low -5, :loc LHR}]
+;; New locations that have never been below 0:  [{:id LHR, :over-zero-loc LHR}]
+
+;; Now we retract the temperature of -5 at LHR
+;; Cold temperatures with this retraction:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20} {:id 6, :cold-temperature -5}]
+;; Local temperature records with this retraction:  [{:id MCI, :hight 115, :low -10, :loc MCI} {:id LHR, :hight 90, :low 20, :loc LHR}]
+;; Locations that have never been below zero with this retraction [{:id LHR, :over-zero-loc LHR}]
+
+;; =======================================
+;; End Example with O'Doyle
+
   )

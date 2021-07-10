@@ -89,4 +89,19 @@
 
   (run-examples)
 
+;; Initial cold temperatures:  ({:?temperature -10} {:?temperature 20})
+;; Initial local temperature records:  ({:?high 110, :?low -10, :?loc MCI} {:?high 90, :?low 20, :?loc LHR})
+;; Initial locations that have never been below 0:  ({:?loc LHR})
+
+;; Now add a temperature of -5 to LHR and a temperature of 115 to MCI
+;; New cold temperatures:  ({:?temperature -5} {:?temperature -10} {:?temperature 20})
+;; New local temperature records:  ({:?high 90, :?low -5, :?loc LHR} {:?high 115, :?low -10, :?loc MCI})
+;; New locations that have never been below 0:  ()
+
+;; Now we retract the temperature of -5 at LHR
+;; Cold temperatures with this retraction:  ({:?temperature -10} {:?temperature 20})
+;; Local temperature records with this retraction:  ({:?high 115, :?low -10, :?loc MCI} {:?high 90, :?low 20, :?loc LHR})
+;; Locations that have never been below zero with this retraction:  ({:?loc LHR})
+
+
   )
