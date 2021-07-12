@@ -28,37 +28,24 @@
          o/*session*
          temp-groups)))]
 
-    ::insert-cold-temperature
+    ::cold-temperatures
     [:what
      [id ::temperature temperature]
      :when
-     (< temperature 30)
-     :then
-     (o/insert! (inc id) ::cold-temperature temperature)]
+     (< temperature 30)]
 
-    ::insert-always-over-zero
+    ::always-over-zero
     [:what
      [id ::local-temperature-location loc]
      [id ::local-temperature-low low]
      :when
-     (> low 0)
-     :then
-     (o/insert! id ::over-zero-location loc)]
-
-    ::always-over-zero
-    [:what
-     [id ::over-zero-location over-zero-loc]]
-
+     (> low 0)]
 
     ::records-facts
     [:what
      [id ::local-temperature-high hight]
      [id ::local-temperature-low low]
-     [id ::local-temperature-location loc]]
-
-    ::cold
-    [:what
-     [id ::cold-temperature cold-temperature]]}))
+     [id ::local-temperature-location loc]]}))
 
 
 
@@ -72,7 +59,7 @@
                             (o/fire-rules))]
 
     (println "Initial cold temperatures: "
-             (o/query-all initial-session ::cold))
+             (o/query-all initial-session ::cold-temperatures))
 
     (println "Initial local temperature records: "
              (o/query-all initial-session ::records-facts))
@@ -89,12 +76,12 @@
                                 (o/fire-rules))]
 
       (println "New cold temperatures: "
-               (o/query-all with-mods-session ::cold))
+               (o/query-all with-mods-session ::cold-temperatures))
 
       (println "New local temperature records: "
                (o/query-all with-mods-session ::records-facts))
 
-      (println "New locations that have never been below 0: "  ;; this should return empty with the new events, but it returns the same as `initial-session`
+      (println "New locations that have never been below 0: "
                (o/query-all with-mods-session ::always-over-zero))
 
       (let [with-retracted-session (-> with-mods-session
@@ -105,12 +92,12 @@
         (println "")
         (println "Now we retract the temperature of -5 at LHR")
         (println "Cold temperatures with this retraction: "
-                 (o/query-all with-retracted-session ::cold)) ;; still displays the -5 cold temperature in the response
+                 (o/query-all with-retracted-session ::cold-temperatures))
 
         (println "Local temperature records with this retraction: "
-                 (o/query-all with-retracted-session ::records-facts)) ;; this should rollback to previous lowest temperature of 20 instead of -5 after retraction
+                 (o/query-all with-retracted-session ::records-facts))
 
-        (println "Locations that have never been below zero with this retraction" ;; return LHR correctly, but only because it did not removed the value in `with-mods-session`
+        (println "Locations that have never been below zero with this retraction"
                  (o/query-all with-retracted-session ::always-over-zero)))))
 
   (println "\n=======================================")
@@ -121,21 +108,22 @@
   (run-examples)
 
 ;; Start Example with O'Doyle
-;; Initial cold temperatures:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20}]
+;; Initial cold temperatures:  [{:id 1, :temperature -10} {:id 3, :temperature 20}]
 ;; Initial local temperature records:  [{:id MCI, :hight 110, :low -10, :loc MCI} {:id LHR, :hight 90, :low 20, :loc LHR}]
-;; Initial locations that have never been below 0:  [{:id LHR, :over-zero-loc LHR}]
+;; Initial locations that have never been below 0:  [{:id LHR, :loc LHR, :low 20}]
 
 ;; Now add a temperature of -5 to LHR and a temperature of 115 to MCI
-;; New cold temperatures:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20} {:id 6, :cold-temperature -5}]
+;; New cold temperatures:  [{:id 1, :temperature -10} {:id 3, :temperature 20} {:id 5, :temperature -5}]
 ;; New local temperature records:  [{:id MCI, :hight 115, :low -10, :loc MCI} {:id LHR, :hight 90, :low -5, :loc LHR}]
-;; New locations that have never been below 0:  [{:id LHR, :over-zero-loc LHR}]
+;; New locations that have never been below 0:  []
 
 ;; Now we retract the temperature of -5 at LHR
-;; Cold temperatures with this retraction:  [{:id 2, :cold-temperature -10} {:id 4, :cold-temperature 20} {:id 6, :cold-temperature -5}]
+;; Cold temperatures with this retraction:  [{:id 1, :temperature -10} {:id 3, :temperature 20}]
 ;; Local temperature records with this retraction:  [{:id MCI, :hight 115, :low -10, :loc MCI} {:id LHR, :hight 90, :low 20, :loc LHR}]
-;; Locations that have never been below zero with this retraction [{:id LHR, :over-zero-loc LHR}]
+;; Locations that have never been below zero with this retraction [{:id LHR, :loc LHR, :low 20}]
 
 ;; =======================================
 ;; End Example with O'Doyle
+
 
   )
